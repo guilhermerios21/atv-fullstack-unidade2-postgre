@@ -1,0 +1,433 @@
+_type: export
+__export_format: 4
+__export_date: '2025-10-26T00:00:00.000Z'
+__export_source: insomnia.desktop.app
+resources:
+  - _id: wrk_atv_u2_jwt
+    parentId: null
+    _type: workspace
+    name: Atividade U2 - Auth + Protected
+    description: Coleção Insomnia para testar Auth (register/login) e rota /protected.
+  - _id: env_base
+    parentId: wrk_atv_u2_jwt
+    _type: environment
+    name: Base Environment
+    data:
+      base_url: http://localhost:3000
+      auth_token: ''
+  - _id: fld_auth
+    parentId: wrk_atv_u2_jwt
+    _type: request_group
+    name: 1. Auth
+  - _id: req_register_ok
+    parentId: fld_auth
+    _type: request
+    name: '✅ Cadastro bem-sucedido'
+    method: POST
+    url: '{{ _.base_url }}/api/register'
+    headers:
+      - name: Content-Type
+        value: application/json
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "name": "João Silva",
+          "email": "joao.silva@example.com",
+          "password": "senha123"
+        }
+  - _id: req_register_dup
+    parentId: fld_auth
+    _type: request
+    name: '❌ Cadastro - e-mail repetido'
+    method: POST
+    url: '{{ _.base_url }}/api/register'
+    headers:
+      - name: Content-Type
+        value: application/json
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "name": "Maria Santos",
+          "email": "joao.silva@example.com",
+          "password": "senha456"
+        }
+  - _id: req_register_pwd_invalid
+    parentId: fld_auth
+    _type: request
+    name: '❌ Cadastro - senha inválida (<6)'
+    method: POST
+    url: '{{ _.base_url }}/api/register'
+    headers:
+      - name: Content-Type
+        value: application/json
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "name": "Pedro Costa",
+          "email": "pedro.costa@example.com",
+          "password": "123"
+        }
+  - _id: req_register_email_invalid
+    parentId: fld_auth
+    _type: request
+    name: '❌ Cadastro - e-mail inválido'
+    method: POST
+    url: '{{ _.base_url }}/api/register'
+    headers:
+      - name: Content-Type
+        value: application/json
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "name": "Ana Lima",
+          "email": "email-sem-arroba",
+          "password": "senha789"
+        }
+  - _id: req_register_bad_request
+    parentId: fld_auth
+    _type: request
+    name: '❌ Cadastro - requisição mal formatada'
+    method: POST
+    url: '{{ _.base_url }}/api/register'
+    headers:
+      - name: Content-Type
+        value: application/json
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "name": "Carlos Souza"
+        }
+  - _id: req_login_ok
+    parentId: fld_auth
+    _type: request
+    name: '✅ Login bem-sucedido'
+    method: POST
+    url: '{{ _.base_url }}/api/login'
+    headers:
+      - name: Content-Type
+        value: application/json
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "email": "joao.silva@example.com",
+          "password": "senha123"
+        }
+  - _id: req_login_wrong_creds
+    parentId: fld_auth
+    _type: request
+    name: '❌ Login - credenciais inválidas'
+    method: POST
+    url: '{{ _.base_url }}/api/login'
+    headers:
+      - name: Content-Type
+        value: application/json
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "email": "joao.silva@example.com",
+          "password": "senhaErrada"
+        }
+  - _id: req_login_pwd_invalid
+    parentId: fld_auth
+    _type: request
+    name: '❌ Login - senha inválida (formato)'
+    method: POST
+    url: '{{ _.base_url }}/api/login'
+    headers:
+      - name: Content-Type
+        value: application/json
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "email": "joao.silva@example.com",
+          "password": "abc"
+        }
+  - _id: req_login_email_invalid
+    parentId: fld_auth
+    _type: request
+    name: '❌ Login - e-mail inválido'
+    method: POST
+    url: '{{ _.base_url }}/api/login'
+    headers:
+      - name: Content-Type
+        value: application/json
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "email": "email-sem-arroba",
+          "password": "senha123"
+        }
+  - _id: req_login_bad_request
+    parentId: fld_auth
+    _type: request
+    name: '❌ Login - requisição mal formatada'
+    method: POST
+    url: '{{ _.base_url }}/api/login'
+    headers:
+      - name: Content-Type
+        value: application/json
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "email": "joao.silva@example.com"
+        }
+  - _id: fld_protected
+    parentId: wrk_atv_u2_jwt
+    _type: request_group
+    name: 2. Protected
+  - _id: req_protected_ok
+    parentId: fld_protected
+    _type: request
+    name: '✅ /protected com token válido'
+    method: GET
+    url: '{{ _.base_url }}/api/protected'
+    headers:
+      - name: Authorization
+        value: 'Bearer {{ _.auth_token }}'
+  - _id: req_protected_no_token
+    parentId: fld_protected
+    _type: request
+    name: '❌ /protected sem token'
+    method: GET
+    url: '{{ _.base_url }}/api/protected'
+  - _id: req_protected_invalid_token
+    parentId: fld_protected
+    _type: request
+    name: '❌ /protected com token inválido'
+    method: GET
+    url: '{{ _.base_url }}/api/protected'
+    headers:
+      - name: Authorization
+        value: 'Bearer token_invalido_xyz'
+  - _id: fld_tasks
+    parentId: wrk_atv_u2_jwt
+    _type: request_group
+    name: '3. Tasks (CRUD)'
+  - _id: req_tasks_create_min
+    parentId: fld_tasks
+    _type: request
+    name: '✅ Criar tarefa (mínima)'
+    method: POST
+    url: '{{ _.base_url }}/api/tasks'
+    headers:
+      - name: Authorization
+        value: 'Bearer {{ _.auth_token }}'
+      - name: Content-Type
+        value: application/json
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "title": "Comprar leite"
+        }
+  - _id: req_tasks_create_full
+    parentId: fld_tasks
+    _type: request
+    name: '✅ Criar tarefa (completa)'
+    method: POST
+    url: '{{ _.base_url }}/api/tasks'
+    headers:
+      - name: Authorization
+        value: 'Bearer {{ _.auth_token }}'
+      - name: Content-Type
+        value: application/json
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "title": "Estudar Node.js",
+          "description": "Revisar Express e MongoDB",
+          "status": "pending",
+          "priority": "high",
+          "dueDate": "2025-10-30T23:59:59.000Z",
+          "tags": ["estudos", "backend"]
+        }
+  - _id: req_tasks_create_no_token
+    parentId: fld_tasks
+    _type: request
+    name: '❌ Criar tarefa - sem token'
+    method: POST
+    url: '{{ _.base_url }}/api/tasks'
+    headers:
+      - name: Content-Type
+        value: application/json
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "title": "Sem auth"
+        }
+  - _id: req_tasks_list
+    parentId: fld_tasks
+    _type: request
+    name: '✅ Listar tarefas'
+    method: GET
+    url: '{{ _.base_url }}/api/tasks'
+    headers:
+      - name: Authorization
+        value: 'Bearer {{ _.auth_token }}'
+  - _id: req_tasks_list_filters
+    parentId: fld_tasks
+    _type: request
+    name: '✅ Listar com filtros (status, priority, tags)'
+    method: GET
+    url: '{{ _.base_url }}/api/tasks?status=pending&priority=high&tags=estudos,backend'
+    headers:
+      - name: Authorization
+        value: 'Bearer {{ _.auth_token }}'
+  - _id: req_tasks_list_no_token
+    parentId: fld_tasks
+    _type: request
+    name: '❌ Listar - sem token'
+    method: GET
+    url: '{{ _.base_url }}/api/tasks'
+  - _id: req_tasks_get_by_id
+    parentId: fld_tasks
+    _type: request
+    name: '✅ Buscar por ID'
+    method: GET
+    url: '{{ _.base_url }}/api/tasks/:taskId'
+    headers:
+      - name: Authorization
+        value: 'Bearer {{ _.auth_token }}'
+    parameters:
+      - name: taskId
+        disabled: false
+        value: INSERIR_ID_VALIDO_AQUI
+  - _id: req_tasks_get_by_id_404
+    parentId: fld_tasks
+    _type: request
+    name: '❌ Buscar - ID inexistente'
+    method: GET
+    url: '{{ _.base_url }}/api/tasks/507f1f77bcf86cd799439011'
+    headers:
+      - name: Authorization
+        value: 'Bearer {{ _.auth_token }}'
+  - _id: req_tasks_put
+    parentId: fld_tasks
+    _type: request
+    name: '✅ Atualizar (PUT)'
+    method: PUT
+    url: '{{ _.base_url }}/api/tasks/:taskId'
+    headers:
+      - name: Authorization
+        value: 'Bearer {{ _.auth_token }}'
+      - name: Content-Type
+        value: application/json
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "title": "Estudar Node.js - Atualizado",
+          "description": "Conceitos avançados",
+          "status": "in_progress",
+          "priority": "urgent",
+          "dueDate": "2025-10-31T23:59:59.000Z",
+          "tags": ["estudos", "backend", "jwt"]
+        }
+    parameters:
+      - name: taskId
+        disabled: false
+        value: INSERIR_ID_VALIDO_AQUI
+  - _id: req_tasks_put_incomplete
+    parentId: fld_tasks
+    _type: request
+    name: '❌ Atualizar (PUT) - dados incompletos'
+    method: PUT
+    url: '{{ _.base_url }}/api/tasks/:taskId'
+    headers:
+      - name: Authorization
+        value: 'Bearer {{ _.auth_token }}'
+      - name: Content-Type
+        value: application/json
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "description": "Apenas descrição"
+        }
+    parameters:
+      - name: taskId
+        disabled: false
+        value: INSERIR_ID_VALIDO_AQUI
+  - _id: req_tasks_patch
+    parentId: fld_tasks
+    _type: request
+    name: '✅ Atualizar (PATCH)'
+    method: PATCH
+    url: '{{ _.base_url }}/api/tasks/:taskId'
+    headers:
+      - name: Authorization
+        value: 'Bearer {{ _.auth_token }}'
+      - name: Content-Type
+        value: application/json
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "status": "completed"
+        }
+    parameters:
+      - name: taskId
+        disabled: false
+        value: INSERIR_ID_VALIDO_AQUI
+  - _id: req_tasks_patch_empty
+    parentId: fld_tasks
+    _type: request
+    name: '❌ Atualizar (PATCH) - sem campos'
+    method: PATCH
+    url: '{{ _.base_url }}/api/tasks/:taskId'
+    headers:
+      - name: Authorization
+        value: 'Bearer {{ _.auth_token }}'
+      - name: Content-Type
+        value: application/json
+    body:
+      mimeType: application/json
+      text: '{}'
+    parameters:
+      - name: taskId
+        disabled: false
+        value: INSERIR_ID_VALIDO_AQUI
+  - _id: req_tasks_delete
+    parentId: fld_tasks
+    _type: request
+    name: '✅ Deletar tarefa'
+    method: DELETE
+    url: '{{ _.base_url }}/api/tasks/:taskId'
+    headers:
+      - name: Authorization
+        value: 'Bearer {{ _.auth_token }}'
+    parameters:
+      - name: taskId
+        disabled: false
+        value: INSERIR_ID_VALIDO_AQUI
+  - _id: req_tasks_delete_no_token
+    parentId: fld_tasks
+    _type: request
+    name: '❌ Deletar - sem token'
+    method: DELETE
+    url: '{{ _.base_url }}/api/tasks/:taskId'
+    parameters:
+      - name: taskId
+        disabled: false
+        value: 507f1f77bcf86cd799439011
+  - _id: req_tasks_stats
+    parentId: fld_tasks
+    _type: request
+    name: '✅ Estatísticas'
+    method: GET
+    url: '{{ _.base_url }}/api/tasks/stats'
+    headers:
+      - name: Authorization
+        value: 'Bearer {{ _.auth_token }}'
