@@ -1,7 +1,7 @@
 import UserRepository from '../repositories/user.repository';
 import { IUser } from '../models/user.model';
 import { sign, verify } from 'jsonwebtoken';
-import bcryptjs from 'bcryptjs';
+import * as bcryptjs from 'bcryptjs';
 import { config } from '../config';
 
 interface RegisterData {
@@ -18,7 +18,7 @@ export class AuthService {
     }
 
     async register(userData: RegisterData): Promise<IUser> {
-        const hashedPassword = await bcryptjs.hash(userData.password, 10);
+    const hashedPassword = await bcryptjs.hash(userData.password, 10);
         const newUser = { ...userData, password: hashedPassword };
         return this.userRepository.createUser(newUser);
     }
