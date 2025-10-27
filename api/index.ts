@@ -26,17 +26,17 @@ app.use(async (_req, _res, next) => {
   next();
 });
 
-// Swagger (acessível em /api/api-docs na Vercel)
+// Swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
   customCss: '.swagger-ui .topbar { display: none }',
   customSiteTitle: 'API Docs - JWT + Tasks CRUD',
 }));
 
-// Rotas - IMPORTANTe: montadas na raiz da função para evitar /api/api
-app.use('/', routes);
+// Health na raiz
+app.get('/', (_req, res) => res.status(200).json({ ok: true, message: 'API PostgreSQL rodando' }));
 
-// Health simples
-app.get('/', (_req, res) => res.status(200).json({ ok: true }));
+// Rotas montadas em /api para consistência com local
+app.use('/api', routes);
 
 // Error handler
 app.use(errorMiddleware);
