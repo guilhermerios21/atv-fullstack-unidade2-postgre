@@ -1,10 +1,20 @@
 import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+// Singleton para reutilizar conexão em ambiente serverless
+const globalForPrisma = global as unknown as { prisma: PrismaClient };
+
+export const prisma = globalForPrisma.prisma || new PrismaClient({
+  log: ['error', 'warn'],
+});
+
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prisma;
+}
 
 export const connectDB = async () => {
-  await prisma.$connect();
-  console.log('PostgreSQL connected successfully (Prisma)');
+  // Em serverless, Prisma conecta automaticamente no primeiro uso
+  // Não precisa de $connect() explícito
+  console.log('Prisma client ready');
 };
 
 export const disconnectDB = async () => {

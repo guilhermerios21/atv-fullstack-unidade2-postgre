@@ -12,20 +12,6 @@ const app = express();
 // Middlewares
 app.use(json());
 
-// Conexão com o banco (mantida entre invocações quando possível)
-let connected = false;
-app.use(async (_req, _res, next) => {
-  if (!connected) {
-    try {
-      await connectDB();
-      connected = true;
-    } catch (e) {
-      console.error('DB connect error:', e);
-    }
-  }
-  next();
-});
-
 // Swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
   customCss: '.swagger-ui .topbar { display: none }',
