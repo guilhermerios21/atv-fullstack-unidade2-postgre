@@ -35,8 +35,8 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
 // Health na raiz
 app.get('/', (_req, res) => res.status(200).json({ ok: true, message: 'API PostgreSQL rodando' }));
 
-// Rotas montadas na raiz (Vercel já adiciona /api automaticamente via diretório api/)
-app.use('/', routes);
+// Rotas montadas em /api
+app.use('/api', routes);
 
 // Error handler
 app.use(errorMiddleware);
